@@ -1,12 +1,11 @@
-const express = require('express');
 const bcrypt = require('./../utils/bcrypt')
-const validator = require('../utils/validation');
+const { signupValidator } = require('../utils/validation');
 const { Account } = require('./../model/models')
 
 const signupHandler = async (req, res) => {
     const reqBody = req.body;
     
-    const reqErrors = validator(reqBody);
+    const reqErrors = signupValidator(reqBody);
     if(reqErrors.length != 0) {
         res.status(406).json({
             status: false,

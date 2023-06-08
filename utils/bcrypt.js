@@ -7,4 +7,9 @@ const createBcrypt = async (password) => {
     return hash;
 }
 
-module.exports = createBcrypt;
+const checkBcrypt = async (hashedPassword, password) => {
+    const result = await bcrypt.compare(password, hashedPassword)
+    return result;
+}
+
+module.exports = { createBcrypt, checkBcrypt };

@@ -18,8 +18,17 @@ const signupValidation = Joi.object({
     repeat_password: Joi.ref('password')
 }).with('password', 'repeat_password');
 
-const signupValidator = (body) => {
-    let errors = signupValidation.validate(body, {abortEarly: false}).error;
+const loginValidation = Joi.object({
+    email: Joi.string().
+        email({minDomainSegments: 2}).
+        required(),
+
+    password: Joi.string().
+    min(8).
+    required()
+})
+
+const getErrorList = (errors) => {
     if(errors != undefined) {
         let errorList = errors.details.map((error) => error.message);
         return errorList;
@@ -27,4 +36,14 @@ const signupValidator = (body) => {
     return [];
 }
 
-module.exports = signupValidator
+const signupValidator = (body) => {
+    let errors = signupValidation.validate(body, {abortEarly: false}).error;
+    return getErrorList(errors);
+}
+
+const loginValidator = (body) => {
+    let errors = loginValidation.validate(body, {abortEarly: false}).error;
+    return getErrorList(errors);
+}
+
+module.exports = { signupValidator, loginValidator }
