@@ -1,5 +1,5 @@
 const sequelize = require('./connection');
-const { User, Profile, Post } = require('./models');
+require('./models');
 
 const initialMigrate = async () => {
     console.log('INFO initialMigrate: starting migration')

@@ -13,14 +13,16 @@ const Account = sequelize.define('Account', {
         allowNull: false,
         validate: {
             max: 15
-        }
+        },
+        unique: true
     },
     email: {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
             max: 150
-        }
+        },
+        unique: true
     },
     password: {
         type: DataTypes.STRING,
