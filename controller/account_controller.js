@@ -38,10 +38,10 @@ const signupHandler = async (req, res) => {
     .catch((err) => {
         res.status(409).json({
             status: false,
-            code: 400,
+            code: 409,
             message: 'conflict data input',
             data: {
-                errors: err.errors[0].message
+                errors: [err.errors[0].message]
             }
         })
     });
