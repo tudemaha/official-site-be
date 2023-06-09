@@ -121,19 +121,6 @@ const editPasswordHandler = async (req, res) => {
 	let authorization = req.headers.authorization;
 	authorization = authorization != undefined ? authorization.split(" ") : "";
 
-	const reqErrors = editPasswordValidator(reqBody);
-	if (reqErrors.length != 0) {
-		res.status(400).json({
-			status: false,
-			code: 400,
-			message: "input not valid",
-			data: {
-				errors: reqErrors,
-			},
-		});
-		return;
-	}
-
 	const validate = await checkToken(authorization.slice(-1));
 	if (
 		typeof validate == "boolean" ||
@@ -145,6 +132,19 @@ const editPasswordHandler = async (req, res) => {
 			code: 401,
 			message: "access unauthorized",
 			data: null,
+		});
+		return;
+	}
+
+	const reqErrors = editPasswordValidator(reqBody);
+	if (reqErrors.length != 0) {
+		res.status(400).json({
+			status: false,
+			code: 400,
+			message: "input not valid",
+			data: {
+				errors: reqErrors,
+			},
 		});
 		return;
 	}
@@ -218,19 +218,6 @@ const deleteAccountHandler = async (req, res) => {
 	let authorization = req.headers.authorization;
 	authorization = authorization != undefined ? authorization.split(" ") : "";
 
-	const reqErrors = deleteAccountValidator(reqBody);
-	if (reqErrors.length != 0) {
-		res.status(400).json({
-			status: false,
-			code: 400,
-			message: "input not valid",
-			data: {
-				errors: reqErrors,
-			},
-		});
-		return;
-	}
-
 	const validate = await checkToken(authorization.slice(-1));
 	if (
 		typeof validate == "boolean" ||
@@ -242,6 +229,19 @@ const deleteAccountHandler = async (req, res) => {
 			code: 401,
 			message: "access unauthorized",
 			data: null,
+		});
+		return;
+	}
+
+	const reqErrors = deleteAccountValidator(reqBody);
+	if (reqErrors.length != 0) {
+		res.status(400).json({
+			status: false,
+			code: 400,
+			message: "input not valid",
+			data: {
+				errors: reqErrors,
+			},
 		});
 		return;
 	}
