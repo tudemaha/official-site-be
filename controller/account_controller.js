@@ -118,7 +118,8 @@ const loginHandler = async (req, res) => {
 const editPasswordHandler = async (req, res) => {
 	const reqBody = req.body;
 	const username = req.params.username.replace(":", "");
-	const authorization = req.headers.authorization.split(" ");
+	let authorization = req.headers.authorization;
+	authorization = authorization != undefined ? authorization.split(" ") : "";
 
 	const reqErrors = editPasswordValidator(reqBody);
 	if (reqErrors.length != 0) {
@@ -214,7 +215,8 @@ const editPasswordHandler = async (req, res) => {
 const deleteAccountHandler = async (req, res) => {
 	const reqBody = req.body;
 	const username = req.params.username.replace(":", "");
-	const authorization = req.headers.authorization.split(" ");
+	let authorization = req.headers.authorization;
+	authorization = authorization != undefined ? authorization.split(" ") : "";
 
 	const reqErrors = deleteAccountValidator(reqBody);
 	if (reqErrors.length != 0) {
