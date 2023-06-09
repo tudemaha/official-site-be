@@ -22,7 +22,7 @@
 
 - [x] Signup
 - [x] Login
-- [ ] Edit Password
+- [x] Edit Password
 - [ ] Delete Account
 - [ ] Logout
 
@@ -45,7 +45,8 @@
 - [x] Bcrypt Check Password
 - [x] Input Validation
 - [x] Create Token
-- [ ] Check Token
+- [x] Check Token
+- [x] Updte Token
 
 ### Flow for Request and Response
 
@@ -56,11 +57,11 @@
 
 ```json
 {
-  "status": false,
-  "code": 409,
-  "message": "conflict data input",
-  "data": {
-    "errors": ["username must be unique"]
-  }
+	"status": false,
+	"code": 409,
+	"message": "conflict data input",
+	"data": {
+		"errors": ["username must be unique"]
+	}
 }
 ```

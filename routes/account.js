@@ -1,15 +1,19 @@
 const express = require("express");
 const {
-  signupHandler,
-  loginHandler,
+	signupHandler,
+	loginHandler,
+	editPasswordHandler,
 } = require("./../controller/account_controller");
 const { Account } = require("./../model/models");
-const generateToken = require("./../utils/token");
+const { checkToken, updateToken } = require("./../utils/token");
+const { editPasswordValidator } = require("./../utils/validation");
+const { checkBcrypt, createBcrypt } = require("../utils/bcrypt");
 
 const router = express.Router();
 router.use(express.json());
 
 router.post("/signup", signupHandler);
 router.post("/login", loginHandler);
+router.put("/:username", editPasswordHandler);
 
 module.exports = router;
