@@ -116,7 +116,7 @@ const loginHandler = async (req, res) => {
 
 const editPasswordHandler = async (req, res) => {
 	const reqBody = req.body;
-	const username = req.params.username;
+	const username = req.params.username.replace(":", "");
 	const authorization = req.headers.authorization.split(" ");
 
 	const reqErrors = editPasswordValidator(reqBody);
@@ -171,7 +171,7 @@ const editPasswordHandler = async (req, res) => {
 	let status = false;
 
 	if (
-		validate.username == username.split(":").slice(-1) &&
+		validate.username == username &&
 		validate.email == reqBody.email &&
 		(await checkBcrypt(account.password, reqBody.old_password))
 	) {

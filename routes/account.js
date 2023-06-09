@@ -15,5 +15,6 @@ router.use(express.json());
 router.post("/signup", signupHandler);
 router.post("/login", loginHandler);
 router.put("/:username", editPasswordHandler);
+router.delete("/:username", (req, res) => {});
 
 module.exports = router;
