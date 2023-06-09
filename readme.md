@@ -28,8 +28,8 @@
 
 #### Profile management
 
-- [ ] Edit Profile
-- [ ] Get Profile
+- [x] Edit Profile
+- [x] Get Profile
 
 #### Post CRUD
 
