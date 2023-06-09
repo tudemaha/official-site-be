@@ -8,7 +8,6 @@ const {
 } = require("./../controller/account_controller");
 
 const router = express.Router();
-router.use(express.json());
 
 router.post("/signup", signupHandler);
 router.post("/login", loginHandler);
