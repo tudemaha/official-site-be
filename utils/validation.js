@@ -26,6 +26,10 @@ const editPasswordValidation = Joi.object({
 	new_password_repeat: Joi.ref("new_password"),
 }).with("new_password", "new_password_repeat");
 
+const deleteAccountValidation = Joi.object({
+	password: Joi.string().min(8).required(),
+});
+
 const getErrorList = (errors) => {
 	if (errors != undefined) {
 		let errorList = errors.details.map((error) => error.message);
@@ -51,4 +55,16 @@ const editPasswordValidator = (body) => {
 	return getErrorList(errors);
 };
 
-module.exports = { signupValidator, loginValidator, editPasswordValidator };
+const deleteAccountValidator = (body) => {
+	const errors = deleteAccountValidation.validate(body, {
+		abortEarly: false,
+	}).error;
+	return getErrorList(errors);
+};
+
+module.exports = {
+	signupValidator,
+	loginValidator,
+	editPasswordValidator,
+	deleteAccountValidator,
+};

@@ -161,7 +161,7 @@ const editPasswordHandler = async (req, res) => {
 
 	let account = await Account.findAll({
 		where: {
-			username: validate.username,
+			username,
 		},
 		attributes: ["password"],
 	});
