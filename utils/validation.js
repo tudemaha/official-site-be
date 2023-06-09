@@ -30,6 +30,18 @@ const deleteAccountValidation = Joi.object({
 	password: Joi.string().min(8).required(),
 });
 
+const editProfileValidation = Joi.object({
+	name: Joi.string().min(3).max(255).required(),
+
+	position: Joi.string().required(),
+
+	grade: Joi.string().required(),
+
+	education: Joi.string().required(),
+
+	address: Joi.string().required(),
+});
+
 const getErrorList = (errors) => {
 	if (errors != undefined) {
 		let errorList = errors.details.map((error) => error.message);
@@ -62,9 +74,17 @@ const deleteAccountValidator = (body) => {
 	return getErrorList(errors);
 };
 
+const editProfileValidator = (body) => {
+	const errors = editProfileValidation.validate(body, {
+		abortEarly: false,
+	}).error;
+	return getErrorList(errors);
+};
+
 module.exports = {
 	signupValidator,
 	loginValidator,
 	editPasswordValidator,
 	deleteAccountValidator,
+	editProfileValidator,
 };
