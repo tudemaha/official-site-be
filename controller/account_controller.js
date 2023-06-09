@@ -288,9 +288,48 @@ const deleteAccountHandler = async (req, res) => {
 	});
 };
 
+const logoutHandler = async (req, res) => {
+	let authorization = req.headers.authorization;
+	authorization = authorization != undefined ? authorization.split(" ") : "";
+
+	const validate = await checkToken(authorization.slice(-1));
+	if (
+		typeof validate == "boolean" ||
+		!validate ||
+		authorization[0] != "Bearer"
+	) {
+		res.status(401).json({
+			status: false,
+			code: 401,
+			message: "access unauthorized",
+			data: null,
+		});
+		return;
+	}
+
+	await Account.update(
+		{
+			token: null,
+		},
+		{
+			where: {
+				username: validate.username,
+			},
+		}
+	);
+
+	res.status(200).json({
+		status: true,
+		code: 200,
+		message: "logout success",
+		data: null,
+	});
+};
+
 module.exports = {
 	signupHandler,
 	loginHandler,
 	editPasswordHandler,
 	deleteAccountHandler,
+	logoutHandler,
 };

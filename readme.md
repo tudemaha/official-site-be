@@ -23,8 +23,8 @@
 - [x] Signup
 - [x] Login
 - [x] Edit Password
-- [ ] Delete Account
-- [ ] Logout
+- [x] Delete Account
+- [x] Logout
 
 #### Profile management
 
