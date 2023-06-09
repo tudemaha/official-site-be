@@ -5,7 +5,7 @@ const initialMigrate = require("./model/migrate");
 const accountRouter = require("./routes/account");
 const profileRouter = require("./routes/profile");
 
-// initialMigrate()
+// initialMigrate();
 
 const app = express();
 app.use(express.json());
