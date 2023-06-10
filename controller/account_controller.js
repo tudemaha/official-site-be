@@ -1,4 +1,4 @@
-const { Account } = require("./../model/models");
+const { Account, Profile } = require("./../model/models");
 const { createBcrypt, checkBcrypt } = require("./../utils/bcrypt");
 const { checkToken, updateToken } = require("./../utils/token");
 const {
@@ -7,6 +7,7 @@ const {
 	editPasswordValidator,
 	deleteAccountValidator,
 } = require("../utils/validation");
+const sequelize = require("../model/connection");
 
 const signupHandler = async (req, res) => {
 	const reqBody = req.body;
@@ -26,13 +27,26 @@ const signupHandler = async (req, res) => {
 
 	const passwordHash = await createBcrypt(reqBody.password);
 
-	const result = Account.create({
-		username: reqBody.username,
-		email: reqBody.email,
-		password: passwordHash,
-	});
+	const createTransaction = async (transaction) => {
+		await Account.create(
+			{
+				username: reqBody.username,
+				email: reqBody.email,
+				password: passwordHash,
+			},
+			{ transaction }
+		);
 
-	result
+		await Profile.create(
+			{
+				AccountUsername: reqBody.username,
+			},
+			{ transaction }
+		);
+	};
+
+	sequelize
+		.transaction(createTransaction)
 		.then(() => {
 			res.status(201).json({
 				status: true,
