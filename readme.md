@@ -34,10 +34,10 @@
 #### Post CRUD
 
 - [x] Create Post
-- [ ] Get Post List (with pagination)
+- [x] Get Post List (with pagination)
 - [x] Get Detailed Post
-- [ ] Edit Post
-- [ ] Detele Post
+- [x] Edit Post
+- [x] Detele Post
 
 #### Utils
 
