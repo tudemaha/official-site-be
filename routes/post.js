@@ -1,4 +1,5 @@
 const fs = require("node:fs");
+const os = require("node:os");
 const path = require("node:path");
 const express = require("express");
 const multer = require("multer");
@@ -113,6 +114,43 @@ router.post("/create", upload.single("image"), async (req, res) => {
 				},
 			});
 		});
+});
+
+router.get("/:username/:slug", async (req, res) => {
+	const username = req.params.username.replace(":", "");
+	const slug = req.params.slug.replace(":", "");
+
+	const post = await Post.findOne({
+		where: {
+			slug,
+			AccountUsername: username,
+		},
+		attributes: {
+			exclude: "AccountUsername",
+		},
+	});
+
+	if (post === null) {
+		res.status(404).json({
+			status: false,
+			code: 400,
+			message: "post not found",
+			data: null,
+		});
+		return;
+	}
+
+	const url = new URL(
+		path.join(fileDirectory, post.image),
+		"http://" + req.headers.host
+	);
+	post.image = url.toString();
+	res.status(200).json({
+		status: true,
+		code: 200,
+		message: "get data success",
+		data: post,
+	});
 });
 
 router.use((err, req, res, next) => {

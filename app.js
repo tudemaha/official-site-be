@@ -10,6 +10,8 @@ const profileRouter = require("./routes/profile");
 
 const app = express();
 app.use(express.json());
+app.use("/images", express.static("images"));
+
 app.use("/account", accountRouter);
 app.use("/profile", profileRouter);
 app.use("/post", postRouter);

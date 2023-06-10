@@ -33,9 +33,9 @@
 
 #### Post CRUD
 
-- [ ] Create Post
+- [x] Create Post
 - [ ] Get Post List (with pagination)
-- [ ] Get Detailed Post
+- [x] Get Detailed Post
 - [ ] Edit Post
 - [ ] Detele Post
 
