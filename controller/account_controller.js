@@ -1,4 +1,4 @@
-const { Account } = require("./../model/models");
+const { Account, Profile } = require("./../model/models");
 const { createBcrypt, checkBcrypt } = require("./../utils/bcrypt");
 const { checkToken, updateToken } = require("./../utils/token");
 const {
@@ -7,6 +7,7 @@ const {
 	editPasswordValidator,
 	deleteAccountValidator,
 } = require("../utils/validation");
+const sequelize = require("../model/connection");
 
 const signupHandler = async (req, res) => {
 	const reqBody = req.body;
@@ -26,13 +27,26 @@ const signupHandler = async (req, res) => {
 
 	const passwordHash = await createBcrypt(reqBody.password);
 
-	const result = Account.create({
-		username: reqBody.username,
-		email: reqBody.email,
-		password: passwordHash,
-	});
+	const createTransaction = async (transaction) => {
+		await Account.create(
+			{
+				username: reqBody.username,
+				email: reqBody.email,
+				password: passwordHash,
+			},
+			{ transaction }
+		);
 
-	result
+		await Profile.create(
+			{
+				AccountUsername: reqBody.username,
+			},
+			{ transaction }
+		);
+	};
+
+	sequelize
+		.transaction(createTransaction)
 		.then(() => {
 			res.status(201).json({
 				status: true,
@@ -69,14 +83,14 @@ const loginHandler = async (req, res) => {
 		return;
 	}
 
-	let account = await Account.findAll({
+	let account = await Account.findOne({
 		where: {
 			email: reqBody.email,
 		},
 		attributes: ["username", "email", "password"],
 	});
 
-	if (account.length === 0) {
+	if (account == null) {
 		res.status(404).json({
 			status: false,
 			code: 404,
@@ -87,7 +101,6 @@ const loginHandler = async (req, res) => {
 		});
 		return;
 	}
-	account = account[0];
 
 	let passStatus = await checkBcrypt(account.password, reqBody.password);
 	if (!passStatus) {
@@ -161,13 +174,12 @@ const editPasswordHandler = async (req, res) => {
 		return;
 	}
 
-	let account = await Account.findAll({
+	let account = await Account.findOne({
 		where: {
 			username,
 		},
 		attributes: ["password"],
 	});
-	account = account[0];
 
 	const newPassword = await createBcrypt(reqBody.new_password);
 	let status = false;
@@ -246,13 +258,12 @@ const deleteAccountHandler = async (req, res) => {
 		return;
 	}
 
-	let account = await Account.findAll({
+	let account = await Account.findOne({
 		where: {
 			username,
 		},
 		attributes: ["password"],
 	});
-	account = account[0];
 
 	let status = false;
 	if (

@@ -7,15 +7,15 @@ const generateToken = (size = 64) => {
 };
 
 const checkToken = async (token) => {
-	let account = await Account.findAll({
+	let account = await Account.findOne({
 		where: {
 			token,
 		},
 		attributes: ["username", "email"],
 	});
 
-	if (account.length == 0) return false;
-	return account[0];
+	if (account == null) return false;
+	return account;
 };
 
 const updateToken = async (email) => {
