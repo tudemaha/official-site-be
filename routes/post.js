@@ -219,4 +219,68 @@ router.get("/:username", async (req, res) => {
 	});
 });
 
+router.delete("/:slug", async (req, res) => {
+	const slug = req.params.slug.replace(":", "");
+	let authorization = req.headers.authorization;
+	authorization = authorization != undefined ? authorization.split(" ") : "";
+
+	const validate = await checkToken(authorization.slice(-1));
+	if (
+		typeof validate == "boolean" ||
+		!validate ||
+		authorization[0] != "Bearer"
+	) {
+		res.status(401).json({
+			status: false,
+			code: 401,
+			message: "access unauthorized",
+			data: null,
+		});
+		return;
+	}
+
+	const post = await Post.findOne({
+		where: {
+			slug,
+		},
+	});
+
+	if (post == null) {
+		res.status(404).json({
+			status: false,
+			code: 404,
+			message: "post not found",
+			data: null,
+		});
+		return;
+	}
+
+	if (post.AccountUsername != validate.username) {
+		res.status(403).json({
+			status: false,
+			code: 403,
+			message: "forbidden access",
+			data: null,
+		});
+		return;
+	}
+
+	Post.destroy({
+		where: {
+			slug,
+		},
+	}).then(() => {
+		fs.unlinkSync(path.join(fileDirectory + post.image));
+	});
+
+	const newToken = await updateToken(validate.email);
+	res.set("Authorization", `Bearer ${newToken}`);
+	res.status(200).json({
+		status: true,
+		code: 200,
+		message: "post deleted successfully",
+		data: null,
+	});
+});
+
 module.exports = router;
