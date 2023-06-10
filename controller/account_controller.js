@@ -69,14 +69,14 @@ const loginHandler = async (req, res) => {
 		return;
 	}
 
-	let account = await Account.findAll({
+	let account = await Account.findOne({
 		where: {
 			email: reqBody.email,
 		},
 		attributes: ["username", "email", "password"],
 	});
 
-	if (account.length === 0) {
+	if (account == null) {
 		res.status(404).json({
 			status: false,
 			code: 404,
@@ -87,7 +87,6 @@ const loginHandler = async (req, res) => {
 		});
 		return;
 	}
-	account = account[0];
 
 	let passStatus = await checkBcrypt(account.password, reqBody.password);
 	if (!passStatus) {
@@ -161,13 +160,12 @@ const editPasswordHandler = async (req, res) => {
 		return;
 	}
 
-	let account = await Account.findAll({
+	let account = await Account.findOne({
 		where: {
 			username,
 		},
 		attributes: ["password"],
 	});
-	account = account[0];
 
 	const newPassword = await createBcrypt(reqBody.new_password);
 	let status = false;
@@ -246,13 +244,12 @@ const deleteAccountHandler = async (req, res) => {
 		return;
 	}
 
-	let account = await Account.findAll({
+	let account = await Account.findOne({
 		where: {
 			username,
 		},
 		attributes: ["password"],
 	});
-	account = account[0];
 
 	let status = false;
 	if (

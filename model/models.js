@@ -4,12 +4,6 @@ const sequelize = require("./connection");
 const Account = sequelize.define(
 	"Account",
 	{
-		id: {
-			type: DataTypes.INTEGER,
-			primaryKey: true,
-			allowNull: false,
-			autoIncrement: true,
-		},
 		username: {
 			type: DataTypes.STRING,
 			allowNull: false,
@@ -17,6 +11,7 @@ const Account = sequelize.define(
 				max: 15,
 			},
 			unique: true,
+			primaryKey: true,
 		},
 		email: {
 			type: DataTypes.STRING,
