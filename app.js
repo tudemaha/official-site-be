@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require("cors");
 require("dotenv").config();
 
 const initialMigrate = require("./model/migrate");
@@ -11,6 +12,12 @@ const profileRouter = require("./routes/profile");
 const app = express();
 app.use(express.json());
 app.use("/images", express.static("images"));
+
+const corsOptions = {
+	exposedHeaders: ["Authorization"],
+};
+
+app.use(cors(corsOptions));
 
 app.use("/account", accountRouter);
 app.use("/profile", profileRouter);
