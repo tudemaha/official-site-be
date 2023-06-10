@@ -85,7 +85,7 @@ router.post("/create", upload.single("image"), async (req, res) => {
 	fs.writeFileSync(filePath, fileBuffer);
 
 	const post = Post.create({
-		slug: reqBody.title.toLowerCase().replace(" ", "-"),
+		slug: reqBody.title.toLowerCase().replace(/ /g, "-"),
 		title: reqBody.title,
 		image: fileName + fileExt,
 		content: reqBody.content,
@@ -105,9 +105,9 @@ router.post("/create", upload.single("image"), async (req, res) => {
 		})
 		.catch((err) => {
 			fs.unlinkSync(filePath);
-			res.status(500).json({
+			res.status(400).json({
 				status: false,
-				code: 500,
+				code: 400,
 				message: "error creating post",
 				data: {
 					errors: err.errors[0].message,
@@ -160,6 +160,61 @@ router.use((err, req, res, next) => {
 		message: "input not valid",
 		data: {
 			errors: [err.message],
+		},
+	});
+});
+
+router.get("/:username", async (req, res) => {
+	const username = req.params.username.replace(":", "");
+
+	let currentPage = req.query.page;
+	currentPage = currentPage == undefined || currentPage < 1 ? 1 : currentPage;
+	const limit = 10;
+	const firstData = currentPage * limit - limit;
+
+	const posts = await Post.findAndCountAll({
+		offset: firstData,
+		limit,
+		where: {
+			AccountUsername: username,
+		},
+		order: [["createdAt", "DESC"]],
+		attributes: {
+			exclude: "AccountUsername",
+		},
+	});
+
+	if (posts.count == 0) {
+		res.status(404).json({
+			status: false,
+			code: 404,
+			message: "posts not found",
+			data: null,
+		});
+		return;
+	}
+
+	const pageCount = Math.ceil(posts.count / limit);
+	posts.rows.forEach((row, i) => {
+		const url = new URL(
+			path.join(fileDirectory, row.image),
+			"http://" + req.headers.host
+		);
+		row.image = url.toString();
+		posts.rows[i].image = row.image;
+	});
+
+	res.status(200).json({
+		status: true,
+		code: 200,
+		message: "get data success",
+		data: {
+			posts: posts.rows,
+			pagination: {
+				current_page: parseInt(currentPage, 10),
+				page_count: pageCount,
+				first_data: firstData,
+			},
 		},
 	});
 });
