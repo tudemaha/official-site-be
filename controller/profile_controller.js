@@ -6,7 +6,7 @@ const { editProfileValidator } = require("../utils/validation");
 const readProfileHandler = async (req, res) => {
 	const username = req.params.username.replace(":", "");
 
-	let profile = await Profile.findAll({
+	let profile = await Profile.findOne({
 		include: {
 			model: Account,
 			required: true,
@@ -18,7 +18,7 @@ const readProfileHandler = async (req, res) => {
 		attributes: ["name", "position", "grade", "education", "address"],
 	});
 
-	if (profile.length == 0) {
+	if (profile == null) {
 		res.status(404).json({
 			status: false,
 			code: 404,
@@ -27,8 +27,6 @@ const readProfileHandler = async (req, res) => {
 		});
 		return;
 	}
-
-	profile = profile[0];
 
 	res.status(200).json({
 		status: true,
