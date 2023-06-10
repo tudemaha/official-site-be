@@ -153,17 +153,6 @@ router.get("/:username/:slug", async (req, res) => {
 	});
 });
 
-router.use((err, req, res, next) => {
-	res.status(400).json({
-		status: false,
-		code: 400,
-		message: "input not valid",
-		data: {
-			errors: [err.message],
-		},
-	});
-});
-
 router.get("/:username", async (req, res) => {
 	const username = req.params.username.replace(":", "");
 
@@ -280,6 +269,127 @@ router.delete("/:slug", async (req, res) => {
 		code: 200,
 		message: "post deleted successfully",
 		data: null,
+	});
+});
+
+router.put("//:slug", upload.single("image"), async (req, res) => {
+	const slug = req.params.slug.replace(":", "");
+
+	let authorization = req.headers.authorization;
+	authorization = authorization != undefined ? authorization.split(" ") : "";
+
+	const validate = await checkToken(authorization.slice(-1));
+	if (
+		typeof validate == "boolean" ||
+		!validate ||
+		authorization[0] != "Bearer"
+	) {
+		res.status(401).json({
+			status: false,
+			code: 401,
+			message: "access unauthorized",
+			data: null,
+		});
+		return;
+	}
+
+	const reqBody = req.body;
+	const reqError = createPostValidator(reqBody);
+	if (reqError.length != 0) {
+		res.status(400).json({
+			status: false,
+			code: 400,
+			message: "input not valid",
+			data: null,
+		});
+		return;
+	}
+
+	const reqFile = req.file;
+	if (reqFile == undefined) {
+		res.status(400).json({
+			status: false,
+			code: 400,
+			message: "input not valid",
+			data: {
+				errors: ["no file uploaded"],
+			},
+		});
+		return;
+	}
+
+	const post = await Post.findOne({
+		where: {
+			slug,
+		},
+	});
+
+	if (post == null) {
+		res.status(404).json({
+			status: false,
+			code: 404,
+			message: "post not found",
+			data: null,
+		});
+		return;
+	}
+
+	if (post.AccountUsername != validate.username) {
+		res.status(403).json({
+			status: false,
+			code: 403,
+			message: "forbidden access",
+			data: null,
+		});
+		return;
+	}
+
+	fs.unlinkSync(path.join(fileDirectory, post.image));
+
+	const fileBuffer = reqFile.buffer;
+	const fileName = Date.now() + "-" + Math.round(Math.random() * 1e9);
+	const fileExt = path.extname(reqFile.originalname);
+	const filePath = fileDirectory + fileName + fileExt;
+
+	fs.writeFileSync(filePath, fileBuffer);
+
+	post.slug = reqBody.title.toLowerCase().replace(/ /g, "-");
+	post.title = reqBody.title;
+	post.image = fileName + fileExt;
+	post.content = reqBody.content;
+
+	post
+		.save()
+		.then(async () => {
+			const newToken = await updateToken(validate.email);
+			res.set("Authorization", `Bearer ${newToken}`);
+			res.status(200).json({
+				status: true,
+				code: 200,
+				message: "post updated successfully",
+				data: null,
+			});
+		})
+		.catch((err) => {
+			res.status(500).json({
+				status: false,
+				code: 500,
+				message: "request failed, server error",
+				data: {
+					errors: err,
+				},
+			});
+		});
+});
+
+router.use((err, req, res, next) => {
+	res.status(400).json({
+		status: false,
+		code: 400,
+		message: "input not valid",
+		data: {
+			errors: [err.message],
+		},
 	});
 });
 
