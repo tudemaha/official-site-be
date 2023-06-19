@@ -1,21 +1,20 @@
 const sequelize = require("../model/connection");
+const path = require("node:path");
+const fs = require("node:fs");
 const { Profile, Account } = require("./../model/models");
 const { checkToken, updateToken } = require("../utils/token");
 const { editProfileValidator } = require("../utils/validation");
+
+const fileDirectory = "images/";
 
 const readProfileHandler = async (req, res) => {
 	const username = req.params.username.replace(":", "");
 
 	let profile = await Profile.findOne({
-		include: {
-			model: Account,
-			required: true,
-			where: {
-				username,
-			},
-			attributes: [],
+		where: {
+			AccountUsername: username,
 		},
-		attributes: ["name", "position", "grade", "education", "address"],
+		attributes: ["name", "position", "grade", "education", "address", "image"],
 	});
 
 	if (profile == null) {
@@ -27,6 +26,12 @@ const readProfileHandler = async (req, res) => {
 		});
 		return;
 	}
+
+	const url = new URL(
+		path.join(fileDirectory, profile.image),
+		"http://" + req.headers.host
+	);
+	profile.image = url.toString();
 
 	res.status(200).json({
 		status: true,
@@ -115,4 +120,77 @@ const editProfileHandler = async (req, res) => {
 		});
 };
 
-module.exports = { readProfileHandler, editProfileHandler };
+const editImageHandler = async (req, res) => {
+	const username = req.params.username.replace(":", "");
+	const reqFile = req.file;
+	let authorization = req.headers.authorization;
+	authorization = authorization != undefined ? authorization.split(" ") : "";
+
+	const validate = await checkToken(authorization.slice(-1));
+	if (
+		typeof validate == "boolean" ||
+		!validate ||
+		authorization[0] != "Bearer"
+	) {
+		res.status(401).json({
+			status: false,
+			code: 401,
+			message: "access unauthorized",
+			data: null,
+		});
+		return;
+	}
+
+	if (reqFile == undefined) {
+		res.status(400).json({
+			status: false,
+			code: 400,
+			message: "input not valid",
+			data: {
+				errors: ["no file uploaded"],
+			},
+		});
+		return;
+	}
+
+	const profile = await Profile.findOne({
+		where: {
+			AccountUsername: username,
+		},
+	});
+
+	const fileBuffer = reqFile.buffer;
+	const fileName = username + path.extname(reqFile.originalname);
+	const filePath = path.join(fileDirectory, fileName);
+
+	if (profile.image != "default.png") {
+		fs.unlinkSync(path.join(fileDirectory, profile.image));
+	}
+
+	fs.writeFileSync(filePath, fileBuffer);
+	profile.image = fileName;
+	profile
+		.save()
+		.then(async () => {
+			const newToken = await updateToken(validate.email);
+			res.set("Authorization", `Bearer ${newToken}`);
+			res.status(200).json({
+				status: true,
+				code: 200,
+				message: "profile picture updated successfully",
+				data: null,
+			});
+		})
+		.catch((err) => {
+			res.status(500).json({
+				status: false,
+				code: 500,
+				message: "request failed, server error",
+				data: {
+					errors: err,
+				},
+			});
+		});
+};
+
+module.exports = { readProfileHandler, editProfileHandler, editImageHandler };

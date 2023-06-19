@@ -49,6 +49,11 @@ const Profile = sequelize.define(
 		grade: DataTypes.STRING,
 		education: DataTypes.STRING,
 		address: DataTypes.STRING,
+		image: {
+			type: DataTypes.STRING,
+			allowNull: false,
+			defaultValue: "default.png",
+		},
 	},
 	{
 		tableName: "profiles",
