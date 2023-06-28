@@ -15,6 +15,7 @@
 - Account management
 - Profile management
 - Post management
+- Forum management
 
 ### Progress and List of API Provided
 
@@ -30,6 +31,7 @@
 
 - [x] Edit Profile
 - [x] Get Profile
+- [x] Find Profile
 
 #### Post CRUD
 
@@ -39,6 +41,14 @@
 - [x] Edit Post
 - [x] Detele Post
 
+#### Forum CRUD
+
+- [x] Create Thread
+- [x] Create Comment/Reply
+- [x] Get Threads
+- [x] Get Comments per Thread
+- [x] Update Thread Status
+
 #### Utils
 
 - [x] Bcrpyt Hash
@@ -46,7 +56,7 @@
 - [x] Input Validation
 - [x] Create Token
 - [x] Check Token
-- [x] Updte Token
+- [x] Update Token
 
 ### Flow for Request and Response
 

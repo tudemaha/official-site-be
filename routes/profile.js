@@ -4,6 +4,7 @@ const {
 	readProfileHandler,
 	editProfileHandler,
 	editImageHandler,
+	searchProfileHandler,
 } = require("../controller/profile_controller");
 
 const router = express.Router();
@@ -29,6 +30,7 @@ const upload = multer({
 	storage: multer.memoryStorage(),
 });
 
+router.get("/", searchProfileHandler);
 router.get("/:username", readProfileHandler);
 router.put("/:username", editProfileHandler);
 router.put("/:username/image", upload.single("image"), editImageHandler);

@@ -1,3 +1,4 @@
+const { Op } = require("sequelize");
 const sequelize = require("../model/connection");
 const path = require("node:path");
 const fs = require("node:fs");
@@ -6,6 +7,55 @@ const { checkToken, updateToken } = require("../utils/token");
 const { editProfileValidator } = require("../utils/validation");
 
 const fileDirectory = "images/";
+
+const searchProfileHandler = async (req, res) => {
+	let search = req.query.search;
+	let currentPage = req.query.page;
+
+	search = search != undefined ? search : "";
+	currentPage = currentPage != undefined ? parseInt(currentPage) : 1;
+
+	const limit = 10;
+	const firstData = currentPage * limit - limit;
+
+	const profile = await Profile.findAndCountAll({
+		where: {
+			AccountUsername: {
+				[Op.substring]: search,
+			},
+		},
+		offset: firstData,
+		limit,
+		attributes: ["AccountUsername", "name", "image"],
+	});
+
+	const pageCount = Math.ceil(profile.count / limit);
+
+	profile.rows.forEach((p) => {
+		const url = new URL(
+			path.join(fileDirectory, p.dataValues.image),
+			"http://" + req.headers.host
+		);
+		p.dataValues.image = url.toString();
+
+		p.dataValues.username = p.dataValues.AccountUsername;
+		delete p.dataValues.AccountUsername;
+	});
+
+	res.status(200).json({
+		status: true,
+		code: 200,
+		message: "get data success",
+		data: {
+			pofiles: profile.rows,
+			pagination: {
+				current_page: parseInt(currentPage, 10),
+				page_count: pageCount,
+				first_data: firstData,
+			},
+		},
+	});
+};
 
 const readProfileHandler = async (req, res) => {
 	const username = req.params.username.replace(":", "");
@@ -194,4 +244,9 @@ const editImageHandler = async (req, res) => {
 		});
 };
 
-module.exports = { readProfileHandler, editProfileHandler, editImageHandler };
+module.exports = {
+	searchProfileHandler,
+	readProfileHandler,
+	editProfileHandler,
+	editImageHandler,
+};
