@@ -49,6 +49,9 @@ const Profile = sequelize.define(
 		grade: DataTypes.STRING,
 		education: DataTypes.STRING,
 		address: DataTypes.STRING,
+		wa: DataTypes.STRING,
+		instagram: DataTypes.STRING,
+		about: DataTypes.TEXT,
 		image: {
 			type: DataTypes.STRING,
 			allowNull: false,
@@ -86,6 +89,31 @@ const Post = sequelize.define(
 	}
 );
 
+const Thread = sequelize.define(
+	"Thread",
+	{
+		id: {
+			type: DataTypes.INTEGER,
+			autoIncrement: true,
+			primaryKey: true,
+			allowNull: false,
+		},
+		title: DataTypes.STRING,
+		content: {
+			type: DataTypes.TEXT,
+			allowNull: false,
+		},
+		active: {
+			type: DataTypes.BOOLEAN,
+			allowNull: false,
+			defaultValue: true,
+		},
+	},
+	{
+		tableName: "threads",
+	}
+);
+
 Account.hasOne(Profile);
 Profile.belongsTo(Account, {
 	onUpdate: "CASCADE",
@@ -97,4 +125,20 @@ Post.belongsTo(Account, {
 	onUpdate: "CASCADE",
 });
 
-module.exports = { Account, Profile, Post };
+Post.hasMany(Thread);
+Thread.belongsTo(Post, {
+	onUpdate: "CASCADE",
+	onDelete: "CASCADE",
+});
+Account.hasMany(Thread);
+Thread.belongsTo(Account, {
+	onUpdate: "CASCADE",
+	onDelete: "CASCADE",
+});
+
+Thread.belongsTo(Thread, {
+	as: "parent",
+	onUpdate: "CASCADE",
+	onDelete: "CASCADE",
+});
+module.exports = { Account, Profile, Post, Thread };

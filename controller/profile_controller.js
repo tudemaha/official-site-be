@@ -1,7 +1,7 @@
 const sequelize = require("../model/connection");
 const path = require("node:path");
 const fs = require("node:fs");
-const { Profile, Account } = require("./../model/models");
+const { Profile } = require("./../model/models");
 const { checkToken, updateToken } = require("../utils/token");
 const { editProfileValidator } = require("../utils/validation");
 
@@ -14,7 +14,9 @@ const readProfileHandler = async (req, res) => {
 		where: {
 			AccountUsername: username,
 		},
-		attributes: ["name", "position", "grade", "education", "address", "image"],
+		attributes: {
+			exclude: ["id", "createdAt", "updatedAt", "AccountUsername"],
+		},
 	});
 
 	if (profile == null) {
@@ -77,12 +79,8 @@ const editProfileHandler = async (req, res) => {
 
 	const updateTransaction = async (transaction) => {
 		const profile = await Profile.findOne({
-			include: {
-				model: Account,
-				required: true,
-				where: {
-					username,
-				},
+			where: {
+				AccountUsername: username,
 			},
 		});
 
@@ -91,6 +89,9 @@ const editProfileHandler = async (req, res) => {
 		profile.grade = reqBody.grade;
 		profile.education = reqBody.education;
 		profile.address = reqBody.address;
+		profile.wa = reqBody.wa;
+		profile.instagram = reqBody.instagram;
+		profile.about = reqBody.about;
 
 		await profile.save({ transaction });
 	};

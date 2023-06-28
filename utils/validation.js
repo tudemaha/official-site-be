@@ -29,11 +29,30 @@ const editProfileValidation = Joi.object({
 	grade: Joi.string().required(),
 	education: Joi.string().required(),
 	address: Joi.string().required(),
+	wa: Joi.string().required(),
+	instagram: Joi.string().required(),
+	about: Joi.string().required(),
 });
 
 const createPostValidation = Joi.object({
 	title: Joi.string().min(1).max(255).required(),
 	content: Joi.string().required(),
+	parent: Joi.string().min(1).max(255),
+});
+
+const createThreadValidation = Joi.object({
+	title: Joi.string().min(1).max(255).required(),
+	content: Joi.string().required(),
+	slug: Joi.string().min(1).max(255).required(),
+});
+
+const createCommentValidation = Joi.object({
+	content: Joi.string().required(),
+	parent: Joi.number().required(),
+});
+
+const editActiveValidation = Joi.object({
+	active: Joi.boolean().required(),
 });
 
 const getErrorList = (errors) => {
@@ -82,6 +101,27 @@ const createPostValidator = (body) => {
 	return getErrorList(errors);
 };
 
+const createThreadValidator = (body) => {
+	const error = createThreadValidation.validate(body, {
+		abortEarly: false,
+	}).error;
+	return getErrorList(error);
+};
+
+const createCommentValidator = (body) => {
+	const error = createCommentValidation.validate(body, {
+		abortEarly: false,
+	}).error;
+	return getErrorList(error);
+};
+
+const editActiveValidator = (body) => {
+	const error = editActiveValidation.validate(body, {
+		abortEarly: false,
+	}).error;
+	return getErrorList(error);
+};
+
 module.exports = {
 	signupValidator,
 	loginValidator,
@@ -89,4 +129,7 @@ module.exports = {
 	deleteAccountValidator,
 	editProfileValidator,
 	createPostValidator,
+	createThreadValidator,
+	createCommentValidator,
+	editActiveValidator,
 };
