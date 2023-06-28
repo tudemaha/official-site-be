@@ -47,7 +47,7 @@ const searchProfileHandler = async (req, res) => {
 		code: 200,
 		message: "get data success",
 		data: {
-			pofiles: profile.rows,
+			profiles: profile.rows,
 			pagination: {
 				current_page: parseInt(currentPage, 10),
 				page_count: pageCount,
