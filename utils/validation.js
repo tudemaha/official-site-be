@@ -37,7 +37,6 @@ const editProfileValidation = Joi.object({
 const createPostValidation = Joi.object({
 	title: Joi.string().min(1).max(255).required(),
 	content: Joi.string().required(),
-	parent: Joi.string().min(1).max(255),
 });
 
 const createThreadValidation = Joi.object({
