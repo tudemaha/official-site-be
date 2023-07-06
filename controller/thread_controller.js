@@ -183,6 +183,7 @@ const getThreadController = async (req, res) => {
 		code: 200,
 		message: "get data success",
 		data: {
+			count: thread.count,
 			threads: thread.rows,
 			pagination: {
 				current_page: parseInt(currentPage, 10),
