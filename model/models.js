@@ -25,6 +25,11 @@ const Account = sequelize.define(
 			type: DataTypes.STRING,
 			allowNull: false,
 		},
+		role: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+			defaultValue: 0,
+		},
 		token: {
 			type: DataTypes.STRING,
 			defaultValue: null,
@@ -82,6 +87,11 @@ const Post = sequelize.define(
 		content: {
 			type: DataTypes.TEXT,
 			allowNull: false,
+		},
+		read: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+			defaultValue: 0,
 		},
 	},
 	{

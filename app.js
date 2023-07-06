@@ -8,7 +8,7 @@ const postRouter = require(".//routes/post");
 const profileRouter = require("./routes/profile");
 const threadRouter = require("./routes/thread");
 
-// initialMigrate();
+initialMigrate();
 
 const app = express();
 app.use(express.json());
