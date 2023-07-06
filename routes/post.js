@@ -39,50 +39,50 @@ router.get("/:username/:slug", getPostDetailHandler);
 router.get("/:username", getPostHandler);
 router.delete("/:slug", deletePostHandler);
 router.put("/:slug", upload.single("image"), editPostHandler);
-// router.put(":/slug", async (req, res) => {
-// 	const slug = req.params.slug.replace(":", "");
+router.patch("/:slug", async (req, res) => {
+	const slug = req.params.slug.replace(":", "");
 
-// 	const updateViews = async (transaction) => {
-// 		const post = await Post.findOne({
-// 			where: {
-// 				slug,
-// 			},
-// 		});
-// 		console.log(post);
+	const updateViews = async (transaction) => {
+		const post = await Post.findOne({
+			where: {
+				slug,
+			},
+		});
+		console.log(post);
 
-// 		if (post === null) {
-// 			throw new Error("post not found");
-// 		}
+		if (post === null) {
+			throw new Error("post not found");
+		}
 
-// 		await post.update(
-// 			{
-// 				read: post.read + 1,
-// 			},
-// 			{
-// 				transaction,
-// 			}
-// 		);
-// 	};
+		await post.update(
+			{
+				read: post.read + 1,
+			},
+			{
+				transaction,
+			}
+		);
+	};
 
-// 	sequelize
-// 		.transaction(updateViews)
-// 		.then(() => {
-// 			res.status(200).json({
-// 				status: true,
-// 				code: 200,
-// 				message: "update views success",
-// 				data: null,
-// 			});
-// 		})
-// 		.catch((err) => {
-// 			res.status(400).json({
-// 				status: false,
-// 				code: 404,
-// 				message: err.Error,
-// 				data: null,
-// 			});
-// 		});
-// });
+	sequelize
+		.transaction(updateViews)
+		.then(() => {
+			res.status(200).json({
+				status: true,
+				code: 200,
+				message: "update views success",
+				data: null,
+			});
+		})
+		.catch((err) => {
+			res.status(400).json({
+				status: false,
+				code: 404,
+				message: err.Error,
+				data: null,
+			});
+		});
+});
 
 router.use((err, req, res, next) => {
 	res.status(400).json({

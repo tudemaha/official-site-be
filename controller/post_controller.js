@@ -171,11 +171,11 @@ const getPostHandler = async (req, res) => {
 		code: 200,
 		message: "get data success",
 		data: {
+			count: posts.count,
 			posts: posts.rows,
 			pagination: {
 				current_page: parseInt(currentPage, 10),
 				page_count: pageCount,
-				first_data: firstData,
 			},
 		},
 	});
