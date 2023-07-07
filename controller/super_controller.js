@@ -2,7 +2,6 @@ const { Post, Thread, Account } = require("./../model/models");
 const { checkToken, updateToken } = require("./../utils/token");
 const { editRoleValidator } = require("./../utils/validation");
 const sequelize = require("../model/connection");
-const { where } = require("sequelize");
 
 const getSuperDetailHandler = async (req, res) => {
 	let authorization = req.headers.authorization;
