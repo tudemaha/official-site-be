@@ -87,7 +87,7 @@ const loginHandler = async (req, res) => {
 		where: {
 			email: reqBody.email,
 		},
-		attributes: ["username", "email", "password"],
+		attributes: ["username", "email", "password", "role"],
 	});
 
 	if (account == null) {
@@ -124,6 +124,7 @@ const loginHandler = async (req, res) => {
 		messsage: "login success",
 		data: {
 			username: account.username,
+			role: account.role,
 		},
 	});
 };
