@@ -8,6 +8,7 @@ const accountRouter = require("./routes/account");
 const postRouter = require(".//routes/post");
 const profileRouter = require("./routes/profile");
 const threadRouter = require("./routes/thread");
+const superRouter = require("./routes/super");
 
 // initialMigrate();
 // createSuperAdmin();
@@ -26,6 +27,7 @@ app.use("/account", accountRouter);
 app.use("/profile", profileRouter);
 app.use("/post", postRouter);
 app.use("/thread", threadRouter);
+app.use("/super", superRouter);
 
 app.listen(process.env.PORT, () => {
 	console.log(`app is listening on port http://localhost:${process.env.PORT}`);

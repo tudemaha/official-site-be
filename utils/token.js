@@ -11,7 +11,7 @@ const checkToken = async (token) => {
 		where: {
 			token,
 		},
-		attributes: ["username", "email"],
+		attributes: ["username", "email", "role"],
 	});
 
 	if (account == null) return false;

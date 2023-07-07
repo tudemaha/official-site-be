@@ -54,6 +54,10 @@ const editActiveValidation = Joi.object({
 	active: Joi.boolean().required(),
 });
 
+const editRoleValidation = Joi.object({
+	role: Joi.number().required(),
+});
+
 const getErrorList = (errors) => {
 	if (errors != undefined) {
 		let errorList = errors.details.map((error) => error.message);
@@ -121,6 +125,13 @@ const editActiveValidator = (body) => {
 	return getErrorList(error);
 };
 
+const editRoleValidator = (body) => {
+	const error = editRoleValidation.validate(body, {
+		abortEarly: false,
+	}).error;
+	return getErrorList(error);
+};
+
 module.exports = {
 	signupValidator,
 	loginValidator,
@@ -131,4 +142,5 @@ module.exports = {
 	createThreadValidator,
 	createCommentValidator,
 	editActiveValidator,
+	editRoleValidator,
 };
