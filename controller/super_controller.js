@@ -2,6 +2,7 @@ const { Post, Thread, Account } = require("./../model/models");
 const { checkToken, updateToken } = require("./../utils/token");
 const { editRoleValidator } = require("./../utils/validation");
 const sequelize = require("../model/connection");
+const { where } = require("sequelize");
 
 const getSuperDetailHandler = async (req, res) => {
 	let authorization = req.headers.authorization;
@@ -32,7 +33,13 @@ const getSuperDetailHandler = async (req, res) => {
 	}
 
 	const post = await Post.count();
-	const thread = await Thread.count();
+	const thread = await Thread.count({
+		where: {
+			title: {
+				[Op.not]: null,
+			},
+		},
+	});
 	const account = await Account.count();
 
 	const newToken = await updateToken(validate.email);
