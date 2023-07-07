@@ -364,7 +364,6 @@ const addViewHandler = async (req, res) => {
 				slug,
 			},
 		});
-		console.log(post);
 
 		if (post === null) {
 			throw new Error("post not found");
