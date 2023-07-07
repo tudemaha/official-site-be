@@ -3,12 +3,14 @@ const cors = require("cors");
 require("dotenv").config();
 
 const initialMigrate = require("./model/migrate");
+const createSuperAdmin = require("./model/seeder");
 const accountRouter = require("./routes/account");
 const postRouter = require(".//routes/post");
 const profileRouter = require("./routes/profile");
 const threadRouter = require("./routes/thread");
 
 // initialMigrate();
+// createSuperAdmin();
 
 const app = express();
 app.use(express.json());
