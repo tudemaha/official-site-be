@@ -1,3 +1,5 @@
+const { Op } = require("sequelize");
+
 const { Post, Thread, Account } = require("./../model/models");
 const { checkToken, updateToken } = require("./../utils/token");
 const { editRoleValidator } = require("./../utils/validation");
